@@ -23,11 +23,32 @@ const createTareas = asyncHandler(async (req, res) => {
 })
 
 const updateTareas = asyncHandler(async (req, res) => {
-    res.status(200).json({ message: `Tarea ${req.params.id} modificada` })
+
+    const tarea = await Tarea.findById(req.params.id)
+
+    if (!tarea) {
+        res.status(404)
+        throw new Error('Esa tarea no existe')
+    }
+
+    const tareaUpdated = await Tarea.findByIdAndUpdate(req.params.id, req.body, { new: true })
+
+    res.status(200).json(tareaUpdated)
 })
 
 const deleteTareas = asyncHandler(async (req, res) => {
-    res.status(200).json({ message: `Tarea ${req.params.id} eliminada` })
+
+    const tarea = await Tarea.findById(req.params.id)
+
+    if (!tarea) {
+        res.status(404)
+        throw new Error('Esa tarea no existe')
+    }
+
+    await Tarea.deleteOne(tarea)
+
+
+    res.status(200).json({ id: req.params.id })
 })
 
 module.exports = {
